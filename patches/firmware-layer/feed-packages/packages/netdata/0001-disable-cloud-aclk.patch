@@ -1,0 +1,22 @@
+From: AX6600 Firmware <noreply@ax6600.local>
+Subject: [PATCH] netdata: disable cloud/aclk to fix protobuf/absl compat
+
+Disable Netdata Cloud (ACLK) feature to avoid protobuf/absl API
+incompatibility. The aclk module uses deprecated protobuf APIs
+that are incompatible with newer absl versions.
+
+Error: no matching function for call to
+'absl::lts_20240722::log_internal::LogMessageFatal::LogMessageFatal(...)'
+
+Signed-off-by: AX6600 Firmware <noreply@ax6600.local>
+
+--- a/Makefile
++++ b/Makefile
+@@ -44,6 +44,7 @@ CONFIGURE_ARGS += \
+ 	--disable-ebpf \
+ 	--without-libcap \
+ 	--disable-dbengine \
++	--disable-cloud \
+ 	--disable-compression \
+ 	--disable-plugin-nfacct \
+ 	--disable-plugin-freeipmi \

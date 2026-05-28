@@ -180,6 +180,32 @@ jobs:
           ./scripts/feeds install -a
           ./scripts/feeds install -f -p mosdns mosdns luci-app-mosdns v2dat
           python "${GITHUB_WORKSPACE}/scripts/normalize_feed_versions.py" --source-root "$(pwd)"
+          # Apply feed package patches after feeds are installed
+          PATCH_DIR="${GITHUB_WORKSPACE}/patches/firmware-layer"
+          if [[ -d "${PATCH_DIR}/feed-packages" ]]; then
+            echo "Applying feed package patches..."
+            while IFS= read -r -d '' patch_file; do
+              rel_path="${patch_file#${PATCH_DIR}/feed-packages/}"
+              feed_name="${rel_path%%/*}"
+              remaining="${rel_path#*/}"
+              package_name="${remaining%%/*}"
+              case "${feed_name}" in
+                packages) target_dir="feeds/packages" ;;
+                luci) target_dir="feeds/luci" ;;
+                routing) target_dir="feeds/routing" ;;
+                telephony) target_dir="feeds/telephony" ;;
+                video) target_dir="feeds/video" ;;
+                *) echo "Warning: Unknown feed '${feed_name}', skipping"; continue ;;
+              esac
+              pkg_dir=$(find "${target_dir}" -type d -name "${package_name}" 2>/dev/null | head -1)
+              if [[ -z "${pkg_dir}" ]]; then
+                echo "Warning: Package '${package_name}' not found in '${feed_name}', skipping"
+                continue
+              fi
+              echo "Applying patch to ${feed_name}/${package_name}: $(basename "${patch_file}")"
+              (cd "${pkg_dir}" && patch -p1 < "${patch_file}") || echo "Warning: Failed to apply: ${patch_file}"
+            done < <(find "${PATCH_DIR}/feed-packages" -type f -name '*.patch' -print0 | sort -z)
+          fi
           # Apply the assembled package selections only after feeds are installed.
           # Otherwise feed-provided symbols are still unknown and can be pruned
           # before defconfig sees the intended package plan.
