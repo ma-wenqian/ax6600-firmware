@@ -22,9 +22,11 @@ if [[ -f "${FEEDS_FILE}" ]]; then
 fi
 
 if [[ -d "${PATCH_DIR}" ]]; then
+  # Only apply patches from the root of PATCH_DIR, not from feed-packages subdirectory
+  # Feed package patches are applied later after feeds are installed
   while IFS= read -r -d '' patch_file; do
     git -C "${SOURCE_DIR}" apply --whitespace=nowarn "${patch_file}"
-  done < <(find "${PATCH_DIR}" -type f -name '*.patch' -print0 | sort -z)
+  done < <(find "${PATCH_DIR}" -maxdepth 1 -type f -name '*.patch' -print0 | sort -z)
 fi
 
 # Apply feed package patches after feeds are installed
