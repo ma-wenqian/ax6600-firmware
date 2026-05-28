@@ -1,9 +1,6 @@
 version: 1
 target: ax6600
 
-built_in_target_packages:
-  - "luci-app-athena-led"
-  - "luci-i18n-athena-led-zh-cn"
 
 default_enabled_profiles:
   - "access-localization"
@@ -35,12 +32,6 @@ profiles:
       - name: "luci-i18n-mosdns-zh-cn"
         required: false
       - name: "luci-i18n-passwall-zh-cn"
-        required: false
-      - name: "luci-i18n-zerotier-zh-cn"
-        required: false
-      - name: "luci-i18n-easytier-zh-cn"
-        required: false
-      - name: "luci-i18n-lucky-zh-cn"
         required: false
       - name: "luci-i18n-diskman-zh-cn"
         required: false
@@ -76,17 +67,12 @@ profiles:
           - "CONFIG_PACKAGE_luci-app-mosdns=y"
       - "luci-app-mosdns"
       - "v2dat"
-      - "adguardhome"
-      - "luci-app-adguardhome"
-      - "ddns-go"
-      - "luci-app-ddns-go"
       - "luci-app-autoreboot"
       - "ttyd"
       - "luci-app-ttyd"
       - "luci-app-upnp"
       - "luci-app-wol"
-      - "lucky"
-      - "luci-app-lucky"
+
 
   observability:
     packages:
@@ -107,12 +93,6 @@ profiles:
       - "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Xray=y"
       - "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_V2ray_Geodata=y"
 
-  connectivity:
-    packages:
-      - "easytier"
-      - "luci-app-easytier"
-      - "zerotier"
-      - "luci-app-zerotier"
 
   storage-nas:
     packages:
